@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 sqlx = { version = "0.7.4", features = [ "sqlite", "runtime-tokio" ] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+thiserror = { version = "1" }
