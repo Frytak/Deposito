@@ -18,6 +18,16 @@ struct Deposito {
     default_warehouse: Option<String>,
 }
 
+enum RTItemOption {
+    List,
+    All
+}
+
+enum RemoveTypes {
+    Warehouse,
+    Item(RTItemOption)
+}
+
 impl Deposito {
     pub fn new(default_warehouse: String) -> Self {
         Self {
@@ -50,17 +60,104 @@ impl Deposito {
             match command {
                 "edit" => {
                     println!("\x1b[1m`edit`\x1b[0m edit an existing item in a warehouse.");
-                    println!("\x1b[1mUsage:\x1b[0m deposito edit [options] <warehouse> <item>");
-                    println!("\x1b[1mExample:\x1b[0m deposito edit --name=Egg --description=\"Just a regular egg\" Fridge Eg");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito edit [options] <warehouse> <item>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito edit --name=Egg --q=6 --description=\"Just a regular egg\" Fridge Eg");
+                    println!();
                     println!("\x1b[1mOptions:\x1b[0m");
                     println!("\t-n, --name=<name>         New name");
                     println!("\t-d, --description=<desc>  New description");
                     println!("\t-q, --quantity=<quan>     New quantity");
                 }
-                "add" => { todo!("Add help") }
-                "list" => { todo!("List help") }
-                "view" => { todo!("View help") }
-                "create" => { todo!("Create help") }
+                "add" => {
+                    println!("\x1b[1m`add`\x1b[0m add a new item to a warehouse.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito add <warehouse> <item> [<quantity> | 1]");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito add Fridge Egg 8");
+                }
+                "list" => {
+                    println!("\x1b[1m`list`\x1b[0m list items in the specified warehouse.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito list <warehouse>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito list Fridge");
+                }
+                "view" => {
+                    println!("\x1b[1m`view`\x1b[0m list available warehouses.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito view");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito view");
+                }
+                "create" => {
+                    println!("\x1b[1m`create`\x1b[0m create a new warehouse.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito create <warehouse>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito create Fridge");
+                }
+                "rules" => {
+                    println!("\x1b[1m`rules`\x1b[0m manage rules in a warehouse.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito rules -l <warehouse>");
+                    println!("\tdeposito rules -c <warehouse> <item> <quantity>");
+                    println!("\tdeposito rules -e <warehouse> <items> <quantity>");
+                    println!("\tdeposito rules -r <warehouse> <items>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito rules -l Fridge");
+                    println!("\tdeposito rules -c Fridge Egg 1");
+                    println!("\tdeposito rules -e Fridge Egg Milk Dough 6");
+                    println!("\tdeposito rules -r Fridge Milk Dough");
+                    println!();
+                    println!("\x1b[1mOptions:\x1b[0m");
+                    println!("\t-l, --list    Show rules");
+                    println!("\t-c, --create  Create a new rule");
+                    println!("\t-e, --edit    Edit an existing rule");
+                    println!("\t-r, --remove  Remove a rule");
+                }
+                "raport" => {
+                    println!("\x1b[1m`raport`\x1b[0m create a raport.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito raport [options] <warehouse>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito raport Fridge");
+                    println!("\tdeposito raport -a");
+                    println!();
+                    println!("\x1b[1mOptions:\x1b[0m");
+                    println!("\t-a, --all  Raport all warehouses");
+                }
+                "remove" => {
+                    println!("\x1b[1m`remove`\x1b[0m remove a warehouse or an item.");
+                    println!();
+                    println!("\x1b[1mUsage:\x1b[0m");
+                    println!("\tdeposito remove [options] <to_remove...>");
+                    println!();
+                    println!("\x1b[1mExample:\x1b[0m");
+                    println!("\tdeposito remove -w Fridge");
+                    println!("\tdeposito remove -i Fridge Egg");
+                    println!("\tdeposito remove -ia Fridge");
+                    println!();
+                    println!("\x1b[1mOptions:\x1b[0m");
+                    println!("\t-w, --warehouse  Remove a warehouse");
+                    println!("\t-i, --item       Remove an item");
+                    println!("\t-a, --all        Remove all (items only)");
+                }
                 _ => { println!("No help available for command `\x1b[1medit\x1b[1m`."); }
             }
         } else {
@@ -72,11 +169,14 @@ impl Deposito {
             println!("\x1b[1mCommands:\x1b[0m");
             println!("\tFor more information about a command run the command with `\x1b[1m-h\x1b[0m`");
             println!();
+            println!("\tcreate - create a new warehouse");
             println!("\tview - list available warehouses");
             println!("\tlist - list items in the specified warehouse");
-            println!("\tcreate - create a new warehouse");
             println!("\tadd - add a new item to a warehouse");
             println!("\tedit - edit an existing item in a warehouse");
+            println!("\tremove - remove a warehouse or an item");
+            println!("\trules - manage rules in a warehouse");
+            println!("\traport - create a raport");
         }
     }
 
@@ -212,6 +312,9 @@ impl Deposito {
             Ok(_) => { println!("Item with the name `\x1b[1m{}\x1b[0m` in the `\x1b[1m{}\x1b[0m` warehouse successfully edited.", item_name, warehouse_name); }
             Err(err) => { println!("Unable to edit item with the name `\x1b[1m{}\x1b[0m` in the `\x1b[1m{}\x1b[0m` warehouse. Reason: {}", item_name, warehouse_name, err); }
         }
+
+        println!();
+        self.raport_warehouse(warehouse_name).await;
     }
 
     pub async fn add(&mut self, warehouse_name: &str, item_name: &str, quantity: i64) {
@@ -257,6 +360,261 @@ impl Deposito {
 
                 println!("Unable to add new item `\x1b[1m{}\x1b[0m` into the `\x1b[1m{}\x1b[0m` warehouse. Reason: {}", item_name, warehouse_name, err);
             }
+        }
+    }
+
+    pub async fn remove(&mut self, remove_type: RemoveTypes, to_remove: Vec<String>) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let mut query_string: String;
+        let mut query: sqlx::query::Query<'_, sqlx::Sqlite, _>;
+        match remove_type {
+            RemoveTypes::Warehouse => {
+                query_string = String::from("DELETE FROM items WHERE items.warehouse_id IN (SELECT warehouses.id FROM warehouses WHERE warehouses.name IN (");
+                for index in 0..to_remove.len() {
+                    query_string.push_str(&format!("${}", index+1));
+                    if index != to_remove.len()-1 { query_string.push(','); }
+                }
+                query_string.push_str("));");
+                query_string.push_str("DELETE FROM warehouses WHERE warehouses.name IN (");
+                for index in 0..to_remove.len() {
+                    query_string.push_str(&format!("${}", index+1));
+                    if index != to_remove.len()-1 { query_string.push(','); }
+                }
+                query_string.push_str(");");
+            }
+            RemoveTypes::Item(RTItemOption::List) => {
+                query_string = String::from("DELETE FROM items WHERE items.warehouse_id IN (SELECT warehouses.id FROM warehouses WHERE warehouses.name = $1) AND items.name IN (");
+                for index in 0..to_remove.len()-1 {
+                    query_string.push_str(&format!("${}", index+2));
+                    if index != to_remove.len()-2 { query_string.push(','); }
+                }
+                query_string.push_str(");");
+            }
+            RemoveTypes::Item(RTItemOption::All) => {
+                query_string = String::from("DELETE FROM items WHERE items.warehouse_id IN (SELECT warehouses.id FROM warehouses WHERE warehouses.name = $1);");
+            }
+        }
+
+        query = sqlx::query(&query_string);
+        for remove in to_remove.iter() {
+            query = query.bind(remove);
+        }
+
+        let remove_result = query.execute(pool).await;
+        match remove_result {
+            Ok(_) => { println!("Removed successfully."); }
+            Err(err) => { println!("Unable to remove. Reason: {}", err); }
+        }
+    }
+
+    pub async fn raport_warehouse(&mut self, warehouse_name: &str) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let raport_result = sqlx::query!(r#"
+            SELECT
+                i.name,
+                i.quantity,
+                i.description,
+                r.gets_below_quantity,
+                (SELECT COALESCE((SELECT 1 WHERE r.gets_below_quantity > i.quantity), FALSE, TRUE)) AS "is_critical: bool"
+            FROM
+                items i
+                JOIN warehouses ON i.warehouse_id = warehouses.id
+                JOIN rules r ON i.id = r.item_id
+            WHERE
+                warehouses.name = $1;
+        "#, warehouse_name)
+            .fetch_all(pool)
+            .await;
+
+        match raport_result {
+            Ok(items) => {
+                println!("Raport for the `\x1b[1m{}\x1b[0m` warehouse:", warehouse_name);
+                for item in items {
+                    print!("\t- {} ({})   ", item.name, item.quantity);
+
+                    if item.is_critical.unwrap() {
+                        print!("\x1b[31mCRITICAL\x1b[0m");
+                    } else {
+                        print!("\x1b[32mOK\x1b[0m");
+                    }
+
+                    print!(" (Can't go below {})\n", item.gets_below_quantity);
+                }
+            }
+            Err(err) => { println!("Unable to make a raport for the `\x1b[1m{}\x1b[0m` warehouse. Reason: {}", warehouse_name, err); }
+        }
+    }
+
+    pub async fn raport_all(&mut self) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let raport_result = sqlx::query!(r#"
+            SELECT
+                warehouses.name AS warehouse_name,
+                i.name AS item_name,
+                i.quantity,
+                r.gets_below_quantity,
+                (SELECT COALESCE((SELECT 1 WHERE r.gets_below_quantity > i.quantity), FALSE, TRUE)) AS "is_critical: bool"
+            FROM
+                items i
+                JOIN warehouses ON i.warehouse_id = warehouses.id
+                JOIN rules r ON i.id = r.item_id
+            ORDER BY
+                warehouses.name ASC;
+        "#)
+            .fetch_all(pool)
+            .await;
+
+        match raport_result {
+            Ok(items) => {
+                let mut current_warehouse = String::from("");
+                for item in items {
+                    if current_warehouse != item.warehouse_name {
+                        current_warehouse = item.warehouse_name;
+                        println!("\nRaport for the `\x1b[1m{}\x1b[0m` warehouse:", current_warehouse);
+                    }
+                    print!("\t- {} ({})   ", item.item_name, item.quantity);
+
+                    if item.is_critical.unwrap() {
+                        print!("\x1b[31mCRITICAL\x1b[0m");
+                    } else {
+                        print!("\x1b[32mOK\x1b[0m");
+                    }
+
+                    print!(" (Can't go below {})\n", item.gets_below_quantity);
+                }
+            }
+            Err(err) => { println!("Unable to make a raport for all the warehouse. Reason: {}", err); }
+        }
+    }
+
+    pub async fn show_rules(&mut self, warehouse_name: &str) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let rules_result = sqlx::query!("
+            SELECT
+                i.name,
+                r.gets_below_quantity
+            FROM
+                rules r
+                JOIN items i ON i.id = r.item_id
+                JOIN warehouses w ON w.id = i.warehouse_id
+            WHERE
+                w.name = $1;
+        ", warehouse_name)
+            .fetch_all(pool)
+            .await;
+
+        match rules_result {
+            Ok(rules) => {
+                if rules.len() == 0 {
+                    println!("No rules for the `\x1b[1m{}\x1b[0m` warehouse.", warehouse_name);
+                    return;
+                }
+
+                println!("Rules for the `\x1b[1m{}\x1b[0m` warehouse:", warehouse_name);
+                for rule in rules {
+                    println!("\t- `\x1b[1m{}\x1b[0m` can't get below `\x1b[1m{}\x1b[0m`", rule.name, rule.gets_below_quantity);
+                }
+            }
+            Err(err) => { println!("Unable get rules for the `\x1b[1m{}\x1b[0m` warehouse. Reason: {}", warehouse_name, err); }
+        }
+    }
+
+    pub async fn create_rules(&mut self, warehouse_name: &str, item_name: &str, quantity: i64) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let create_rule_result = sqlx::query!("
+            INSERT INTO rules (id, item_id, gets_below_quantity) VALUES (NULL, (SELECT items.id FROM items JOIN warehouses ON warehouses.id = items.warehouse_id WHERE items.name = $2 AND warehouses.name = $1), $3)
+        ", warehouse_name, item_name, quantity)
+            .execute(pool)
+            .await;
+
+        match create_rule_result {
+            Ok(_) => {
+                println!("Rule in the `\x1b[1m{}\x1b[0m` warehouse successfully created for `\x1b[1m{}\x1b[0m`. You will be alerted in the raport whenever the items' quantity gets below `\x1b[1m{}\x1b[0m`.\n", warehouse_name, item_name, quantity);
+                self.raport_warehouse(warehouse_name).await;
+            }
+            Err(err) => {
+                if let Some(err) = err.as_database_error() {
+                if let Some(code) = err.code() {
+                if code == "2067" {
+                    println!("Rule in the `\x1b[1m{}\x1b[0m` warehouse for `\x1b[1m{}\x1b[0m` already exists.", warehouse_name, item_name);
+                    return;
+                }}}
+
+                println!("Unable to create a rule in the `\x1b[1m{}\x1b[0m` warehouse for `\x1b[1m{}\x1b[0m`. Reason: {}", warehouse_name, item_name, err);
+            }
+        }
+    }
+
+    pub async fn edit_rules(&mut self, warehouse_name: &str, item_names: &[String], quantity: i64) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let mut query_string = String::from("UPDATE rules SET gets_below_quantity = $2 WHERE rules.item_id IN (SELECT items.id FROM items JOIN rules ON items.id = rules.item_id JOIN warehouses ON items.warehouse_id = warehouses.id WHERE warehouses.name = $1 AND items.name IN (");
+
+        for index in 0..item_names.len() {
+            query_string.push_str(&format!("${}", index+3));
+            if index != item_names.len()-1 { query_string.push(','); }
+        }
+        query_string.push_str("));");
+
+        let mut query: sqlx::query::Query<'_, sqlx::Sqlite, _> = sqlx::query(&query_string);
+        query = query.bind(warehouse_name);
+        query = query.bind(quantity);
+        for item in item_names.iter() {
+            query = query.bind(item);
+        }
+
+        match query.execute(pool).await {
+            Ok(_) => { println!("Successfully edited specified rules in the `\x1b[1m{}\x1b[0m` warehouse.", warehouse_name); }
+            Err(err) => { println!("Unable to edit rule(s) in the `\x1b[1m{}\x1b[0m` warehouse for `\x1b[1m{:?}\x1b[0m`. Reason: {}", warehouse_name, item_names, err); }
+        }
+    }
+
+    pub async fn remove_rules(&mut self, warehouse_name: &str, item_names: &[String]) {
+        let pool = match self.get_pool() {
+            Some(pool) => { pool }
+            None => { return; }
+        };
+
+        let mut query_string = String::from("DELETE FROM rules WHERE rules.item_id IN (SELECT items.id FROM items JOIN warehouses ON items.warehouse_id = warehouses.id WHERE warehouses.name = $1 AND items.name IN (");
+
+        for index in 0..item_names.len() {
+            query_string.push_str(&format!("${}", index+2));
+            if index != item_names.len()-1 { query_string.push(','); }
+        }
+        query_string.push_str("));");
+
+        let mut query: sqlx::query::Query<'_, sqlx::Sqlite, _> = sqlx::query(&query_string);
+        query = query.bind(warehouse_name);
+        for item in item_names.iter() {
+            query = query.bind(item);
+        }
+
+        match query.execute(pool).await {
+            Ok(_) => { println!("Successfully removed specified rules from the `\x1b[1m{}\x1b[0m` warehouse.", warehouse_name); }
+            Err(err) => { println!("Unable to remove rule(s) in the `\x1b[1m{}\x1b[0m` warehouse for `\x1b[1m{:?}\x1b[0m`. Reason: {}", warehouse_name, item_names, err); }
         }
     }
 }
@@ -390,8 +748,11 @@ async fn main() {
     let does_require_deposito = match command.as_str() {
         "create"
         | "list"
+        | "raport"
         | "add"
+        | "rules"
         | "edit"
+        | "remove"
         | "view" => { true }
 
         "init" => { false }
@@ -494,6 +855,97 @@ async fn main() {
             }
 
             deposito.edit(&args[0], &args[1], edit_options).await;
+        }
+        "remove" => {
+            let mut has_all_option = false;
+            for option in options.iter() {
+                if option.name == "a" || option.name == "all" {
+                    has_all_option = true;
+                    break;
+                }
+            }
+
+            for option in options.into_iter() {
+                match option.name.as_str() {
+                    "w" | "warehouse" => {
+                        if args.len() < 1 {
+                            println!("`\x1b[1mremove\x1b[0m` with the --warehouse option requires at least one argument (which warehouse to remove).");
+                            return;
+                        }
+
+                        deposito.remove(RemoveTypes::Warehouse, args.clone()).await;
+                    }
+                    "i" | "item" => {
+                        if args.len() < 1 {
+                            println!("`\x1b[1mremove\x1b[0m` with the --item option requires at least two arguments (from which warehouse, what item to remove).");
+                            return;
+                        }
+
+                        if has_all_option {
+                            // TODO: Error when item args
+                            deposito.remove(RemoveTypes::Item(RTItemOption::All), args.clone()).await;
+                        } else {
+                            deposito.remove(RemoveTypes::Item(RTItemOption::List), args.clone()).await;
+                        }
+                    }
+                    "a" | "all" => { /* skip */ }
+                    _ => { println!("Unknown option `\x1b[1m{}\x1b[0m`.", option.name); return; }
+                }
+            }
+        }
+        "raport" => {
+            let mut has_all_option = false;
+            for option in options.iter() {
+                if option.name == "a" || option.name == "all" {
+                    has_all_option = true;
+                    break;
+                }
+            }
+
+            if has_all_option {
+                deposito.raport_all().await;
+            } else {
+                deposito.raport_warehouse(&args[0]).await;
+            }
+        }
+        "rules" => {
+            for option in options.iter() {
+                match option.name.as_str() {
+                    "l" | "list" => { deposito.show_rules(&args[0]).await; }
+                    "c" | "create" => {
+                        if args.len() < 3 {
+                            println!("`\x1b[1mrules\x1b[0m` with the --create option requires at least three arguments (warehouse, item, quantity).");
+                        }
+
+                        let quantity = match args[2].parse::<i64>() {
+                            Ok(quantity) => { quantity }
+                            Err(err) => { println!("Could not validate the quantity. Reason: {}", err); return; }
+                        };
+
+                        deposito.create_rules(&args[0], &args[1], quantity).await;
+                    }
+                    "e" | "edit" => {
+                        if args.len() < 3 {
+                            println!("`\x1b[1mrules\x1b[0m` with the --edit option requires at least three arguments (warehouse, item, quantity).");
+                        }
+
+                        let quantity = match args[args.len()-1].parse::<i64>() {
+                            Ok(quantity) => { quantity }
+                            Err(err) => { println!("Could not validate the quantity. Reason: {}", err); return; }
+                        };
+
+                        deposito.edit_rules(&args[0], args.get(1..args.len()-1).unwrap(), quantity).await;
+                    }
+                    "r" | "remove" => {
+                        if args.len() < 2 {
+                            println!("`\x1b[1mrules\x1b[0m` with the --remove option requires at least two arguments (warehouse, rule).");
+                        }
+
+                        deposito.remove_rules(&args[0], args.get(1..args.len()).unwrap()).await;
+                    }
+                    _ => { println!("Unknown option `\x1b[1m{}\x1b[0m`.", option.name); return; }
+                }
+            }
         }
         _ => { unreachable!() }
     }

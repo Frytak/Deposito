@@ -1,5 +1,7 @@
 --DELETE FROM warehouses;
 --DELETE FROM items;
+--DELETE FROM rules;
 
 DROP TABLE IF EXISTS warehouses;
 DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS rules;

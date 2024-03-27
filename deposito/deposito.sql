@@ -5,9 +5,16 @@ CREATE TABLE IF NOT EXISTS warehouses (
 
 CREATE TABLE IF NOT EXISTS items (
     id INTEGER UNIQUE NOT NULL PRIMARY KEY,
-    warehouse_id INTEGER,
+    warehouse_id INTEGER NOT NULL,
     name TEXT UNIQUE NOT NULL,
     description TEXT,
     quantity INTEGER NOT NULL,
     FOREIGN KEY (warehouse_id) REFERENCES warehouses(id)
+);
+
+CREATE TABLE IF NOT EXISTS rules (
+    id INTEGER UNIQUE NOT NULL PRIMARY KEY,
+    item_id INTEGER UNIQUE NOT NULL,
+    gets_below_quantity INTEGER NOT NULL,
+    FOREIGN KEY (item_id) REFERENCES items(id)
 );
